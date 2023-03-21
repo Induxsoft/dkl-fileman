@@ -1,0 +1,51 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+#_monaco_editor{
+    margin: 0 .5rem;
+}
+#_code_editor{
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+#sel_lang{
+    height: 100%;
+}
+.nav{
+    display: flex;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.path{
+    flex-grow: 1;
+    padding: 0 .5rem;
+    margin-right: .5rem;
+    font-weight: 400;
+    align-self: center;
+}
+.lang select{
+    border: none;
+    outline: none;
+    padding: .3rem .5rem;
+}
+.lang select:hover{
+    cursor: hand;
+    background-color: rgba(240,240,240,.8);
+}
+.controls{
+    display: flex;
+    background-color: #fff;
+    margin-top: 4.5rem;
+    box-shadow: 0 1px 6px 0 #ddd;
+    position: static;
+}
+.control_icon{
+    width: 3.5rem;
+    height: 100%;
+    padding: .5rem 1rem;
+    transition: .3s;
+}
+.control_icon:hover{
+    background-color: #eee;
+}

@@ -1,0 +1,431 @@
+#include "dkli.dkh"
+
+#set "meta-xml-declaration" ""
+#!
+program
+{
+    #include "functions.dkh"
+    #include "serialize.dkh"
+    #include "webcl.dkh"
+    #include "webauth.dkl"
+
+    #include "fso/fso.config.dk"
+    #include "fso/fso.dk"
+    #include "../usersman/usersman.model.dk"
+
+    #include "fileman.config.dk"
+
+    ref @privileges_cat=from.json('
+        [
+            {"id":"read","caption":"Lectura","rem":"Permite ver los archivitos"},
+            {"id":"write","caption":"Escritura","rem":"Permite escribir archivitos"},
+            {"id":"admin","caption":"Administrador","rem":"Super poderes"},
+            {"id":"plus","caption":"Plus Ultra","rem":"Súbele tantito mi buen"}
+        ]
+    ')
+
+    ref @assignable_objects=get_all_users()
+
+    
+
+    base_path=field.dstr(@http_context,"request/headers/document_root","")
+    uri=dir.name(list.str(split(field.dstr(@http_context,"request/headers/request_uri","/"),"?"),0))
+
+    if field.exist(@http_context,"request/get/base_path") && @dklfso_multisites {base_path=@@(@http_context,"request/get/base_path") }
+    if field.exist(@http_context,"request/get/uri") { uri=@@(@http_context,"request/get/uri") }
+
+    if field.exist(@http_context,"request/get/host") && @dklfso_multisites { base_path= path.concat(@dklfso_websites_path,@@(@http_context,"request/get/host")) }
+
+    ref res_info=dklfso.createObjectInfo(base_path,uri)
+
+    ref privileges = @@(res_info,"&privileges")
+
+    if isnull(res_info){ do rise_error(0,"Recurso no encontrado " + base_path+" "+uri)}
+
+    ##
+    div(class="body")
+    {
+        link(rel="stylesheet" href="#<@fileman_basepath>/css/properties.css")
+        
+        div(class="add_privileges_group_modal")
+        {
+            div(class="modal_header")
+            {
+                h4{$"Asignar este privilegio a un objeto"}
+                small(class="small"){$"Elige o escribe el tipo de objeto a asociar y define su identificador."}
+            }
+            div(class="modal_content")
+            {
+                h5{$"Objeto:"}
+                select(id="modal_con_select")
+                {
+                    ##
+                    ref ltype=list.create()
+                    for i=0;i<@count(@assignable_objects)
+                    {
+                        add = @true
+                        ref assign=@item(@assignable_objects,i)
+                        
+                        for u=0;u<@count(ltype)
+                        {
+                            if list.str(ltype,u) == @@(assign,"type"){ add = @false }
+                        }
+                        if add
+                        {
+                            ##
+                            option{$'#<@@(assign,"type")>'}
+                            ##
+                        }
+                        do list.add(ltype,@@(assign,"type"))
+                    }
+                    ##
+                    option{$'Escribir manualmente...'}
+                }
+                input(type="text" placeholder="Escribir manualmente..." id="manual_con_select" autocomplete="off")
+                h5{$"Identificador:"}
+                select(id="modal_id_select")
+                {
+                    option{$'Escribir manualmente...'}
+                }
+                input(type="text" placeholder="Escribir manualmente..." id="manual_id_select" autocomplete="off")
+            }
+            div(class="modal_controls")
+            {
+                button(class="modal_acept"){"Aceptar"}
+                button(class="modal_cancel"){"Cancelar"}
+            }
+        }
+
+        
+        div(class="main_properties")
+        {
+            div(class="exit")
+            {
+                ##
+                link_back = path.concat(@@(res_info,"fullpath"),@fileman_viewtrigger)
+                if @@(res_info,"type") == "file" { link_back = path.concat(field.dstr(res_info,"path",""),@fileman_viewtrigger) }
+                ##
+                a(href='#<link_back>'){$"Cerrar"}
+            }
+            small(class="small"){$"Propiedades"}
+            div(class="header_info")
+            {
+                div(class="principal")
+                {   img(src="")
+                    h3{$'#<@@(res_info,"name")>'}
+                }
+            }
+            div(class="data_info")
+            {
+                div(class="details")
+                {
+                    h5(class="title"){$"Detalles"}hr(class="hr"){}
+                    
+                    div(class="general")
+                    {
+                        h6{$"General"}
+                        div(class="data"){ p{ $'Tipo de archivo:'} span{ $'#<@@(res_info,"type")>' } }
+                        div(class="data"){ p{ $'Ruta completa: '} span{ $'#<@@(res_info,"fullpath")>' } }
+                        ##
+                        pathG = replace(field.dstr(res_info,"path",""),"\\","/")
+                        size='bytes'
+                        length = field.dnum(res_info,'length',1)
+                        integer = 1
+
+                        if length>=1073741824 {
+                            size='GB'
+                            integer=1073741824
+                        } 
+                        else if length>=1048576 {
+                            size='MB' 
+                            integer=1048576
+                        } 
+                        else if length>=1024 {
+                            size='KB' 
+                            integer=1024
+                        }
+
+                        length = div(length,integer)
+                        ##
+                        div(class="data"){ p{ $'Ruta: '} span{ $'#<pathG>' } }
+                        div(class="data"){ p{ $'Nombre: '} span{ $'#<@@(res_info,"name")>' } }
+                        ##
+                        if @@(res_info,"type") == "file"
+                        {
+                            ##
+                            div(class="data"){ p{ $'Tamaño: '} span{ $'#<format(round(length,3),"#,#.0")+" "+size>' } }
+                            ##
+                        }
+                        ##
+                        
+                    }
+                    
+                    div(class="dates")
+                    {
+                        h6{$"Accesos"}
+                        div(class="data"){ p{ $'Creación: '} span{ $'#<@@(res_info,"creation")>' } }
+                        div(class="data"){ p{ $'Último acceso: '} span{ $'#<@@(res_info,"lastaccess")>' } }
+                        div(class="data"){ p{ $'Modificado: '} span{ $'#<@@(res_info,"lastwrite")>' } }
+                    }
+                    
+                    button(class="properties_web blue_button"){$"Propiedades web"}
+                    button(class="avanced blue_button"){$"Avanzadas"}
+                    textarea(id="properties_code" class="text_area" placeholder='{"key" : "value"}'){$""}
+
+                    div(class="details_controls")
+                    {
+                        button(class="aply_code"){$"Aplicar"}
+                        button(class="cancel_code white_button"){$"Cancelar"}
+                    }
+                    div(class="properties_web_modal hidde_control")
+                    {
+                        div(class="modal_header")
+                        {
+                            div(class="modal_header_title")
+                            {
+                                h5{$"Propiedades web"}
+                                small(class="small"){$"meta-tags"}
+                            }
+                            div(class="modal_header_controls")
+                            {
+                                div(class="modal_header_controls_container")
+                                {
+                                    button(onclick="select_propertie('general', this)"){$"General"}
+                                    button(onclick="select_propertie('open_graph', this)"){$"Facebook"}
+                                    button(onclick="select_propertie('twitter', this)"){$"Twitter"}
+                                }
+                            }
+                        }
+                        div(class="modal_content")
+                        {
+                            div(class="item_prop general" id="general")
+                            {
+                                div(class="general_header")
+                                {
+                                    h6{$"General"}
+                                    small{$"meta-tags generales para tu web"}
+                                }
+                                div(class="general_form")
+                                {
+                                    div(class="w-100 f-g-1")
+                                    {
+                                        label{$"Título:"}
+                                        input(id="general_meta_title" type="text")
+                                    }
+                                    div(class="min-w-40 max-w-100 f-g-1")
+                                    {
+                                        label{$"Descripción:"}
+                                        textarea(id="general_meta_description"){$""}
+                                    }
+                                    div(class="min-w-40 max-w-100 f-g-1")
+                                    {
+                                        label{$"Palabras clave:"}
+                                        textarea(id="general_meta_key_words"){$""}
+                                    }
+                                    div(class="min-w-40 max-w-100 f-g-3")
+                                    {
+                                        label{$"URL al favicon:"}
+                                        input(id="general_meta_favicon" type="text")
+                                    }
+                                    div(class="min-w-40 max-w-100 f-g-1")
+                                    {
+                                        label{$"Tipo MIME del favicon:"}
+                                        select(id="general_meta_mime_favicon")
+                                        {
+                                            option(value="image/x-icon"){$"image/x-icon"}
+                                            option(value="image/vnd.microsoft.icon"){$"image/vnd.microsoft.icon"}
+                                            option(value="image/png"){$"image/png"}
+                                            option(value="image/gif"){$"image/gif"}
+                                            option(value="image/jpeg"){$"image/jpeg"}
+                                            option(value="image/svg+xml"){$"image/svg+xml"}
+                                        }
+                                    }
+                                }
+                            }
+                            div(class="item_prop open_graph" id="open_graph")
+                            {
+                                div(class="open_graph_header")
+                                {
+                                    h6{$"Facebook"}
+                                    small{$"meta-tags para sitios como Facebook, Whatsapp y más..."}
+                                }
+                                div(class="open_graph_form")
+                                {
+                                    div(class="w-100 f-g-1")
+                                    {
+                                        label{$"Título:"}
+                                        input(id="open_graph_meta_title" type="text")
+                                    }
+                                    div(class="min-w-40 max-w-100 f-g-1")
+                                    {
+                                        label{$"Url:"}
+                                        input(id="open_graph_meta_url" type="text")
+                                    }
+                                    div(class="min-w-40 max-w-100 f-g-1")
+                                    {
+                                        label{$"Imagen:"}
+                                        input(id="open_graph_meta_image" type="text")
+                                    }
+                                    div(class="min-w-50 max-w-100 f-g-4")
+                                    {
+                                        label{$"Descripción:"}
+                                        textarea(id="open_graph_meta_description"){$""}
+                                    }
+                                    div(class="min-w-10 max-w-100 f-g-1")
+                                    {
+                                        label{$"Tipo:"}
+                                        select(id="open_graph_meta_type")
+                                        {
+                                            option(value="website"){$"website"}
+                                        }
+                                    }
+                                }
+                            }
+                            div(class="item_prop twitter" id="twitter")
+                            {
+                                div(class="twitter_header")
+                                {
+                                    h6{$"Twitter"}
+                                    small{$"meta-tags para Twitter"}
+                                }
+                                div(class="twitter_form")
+                                {
+                                    div(class="w-100 f-g-1")
+                                    {
+                                        label{$"Título:"}
+                                        input(id="twitter_meta_title")
+                                    }
+                                    div(class="min-w-40 max-w-100 f-g-1")
+                                    {
+                                        label{$"Url:"}
+                                        input(id="twitter_meta_url" type="text")
+                                    }
+                                    div(class="min-w-40 max-w-100 f-g-1")
+                                    {
+                                        label{$"Dominio:"}
+                                        input(id="twitter_meta_domain" type="text")
+                                    }
+                                    div(class="min-w-40 max-w-100 f-g-1")
+                                    {
+                                        label{$"Tarjeta:"}
+                                        select(id="twitter_meta_card")
+                                        {
+                                            option(value="summary"){$"summary"}
+                                            option(value="summary_large_image"){$"summary_large_image"}
+                                            option(value="app"){$"app"}
+                                            option(value="player"){$"player"}
+                                        }
+                                    }
+                                    div(class="min-w-40 max-w-100 f-g-1")
+                                    {
+                                        label{$"Imagen:"}
+                                        input(id="twitter_meta_image" type="text")
+                                    }
+                                    div(class="w-100 f-g-1")
+                                    {
+                                        label{$"Descripción:"}
+                                        textarea(id="twitter_meta_description"){$""}
+                                    }
+                                }
+                            }
+                        }
+                        div(class="modal_controls")
+                        {
+                            button(class="properties_web_modal_acept blue_button"){"Aceptar"}
+                            button(class="properties_web_modal_cancel white_button"){"Cancelar"}
+                        }
+                    }
+                }
+                div(class="properties")
+                {
+                    div(class="title_controls")
+                    {
+                        h5(class="title"){$"Privilegios"}
+                        div(class="controls")
+                        {
+                            button(class="aply"){$"Aplicar"}
+                            button(class="cancel"){$"Cancelar"}
+                            button(class="modify"){$"Modificar"}
+                        }
+                    }
+                    hr(class="hr"){}
+                    
+                    div(class="privileges_header")
+                    {
+                        div(class="privileges_select_container" )
+                        {
+                            select(class="privileges_select disableControl")
+                            {
+                                ##
+                                for i=0;i<@count(@privileges_cat)
+                                {
+                                    ref priv=@item(@privileges_cat,i)
+                                    ##
+                                    option{$'#<@@(priv,"id")>'}
+                                    ##
+                                }
+                                //ref privileges = field.dobj(res_info,"privileges",@null)
+                                
+                                go foreach.fobj(index:i,key:k, value:v) with(privileges)
+                                {
+                                    add = @true
+                                    for p=0;p<@count(@privileges_cat)
+                                    {
+                                        ref priv=@item(@privileges_cat,p)
+                                        if @@(priv,"id")==k { add = @false }
+                                    }
+                                    if add
+                                    {
+                                        ##
+                                        option{$'#<k>'}
+                                        ##
+                                    }
+                                }
+                                ##
+                            }
+                            button(id="add_priv" class="disableControl"){$"+"}
+                            button(id="remove_priv" class="disableControl"){$"-"}
+                            
+                        }
+                        div(class="privileges_information")
+                        {
+                            $""
+                        }
+                    }
+                    div(class="privileges_controls")
+                    {
+                        button(id="add_priv_group" class="disableControl"){$"Agregar"}
+                    }
+                    div(class="privileges_group")
+                    {
+                        /*
+                        div(class="group")
+                        {
+                            img(src="#<@fileman_basepath>/icons/user.icon.png")
+                            p{"Juan Perez"}
+                            button(class="remove_group"){"-"}
+                        }
+                        div(class="group")
+                        {
+                            img(src="#<@fileman_basepath>/icons/group.icon.png")
+                            p{"Administradores"}
+                            button{"-"}
+                        }*/
+                    }
+                }
+                
+            }
+        }
+        
+        script{$'
+            var folderPath="#<ifstr(@@(res_info,"$fullpath")=="","/",@@(res_info,"$fullpath")+ifstr(length(trim(@@(res_info,"$fullpath")))==1,"","/"))>";
+            var resource_metadata=#<to.json(res_info)>;
+            var privileges_cat=#<to.json(@privileges_cat)>;
+            var fileman_basePath="#<@fileman_basepath>";
+            var assignable_objects=#<to.json(@assignable_objects)>
+        '}
+        script(src='#<@fileman_basepath+"/js/properties.js">'){$""}
+    }
+    
+    ##
+}

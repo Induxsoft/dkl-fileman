@@ -1,0 +1,154 @@
+﻿#include "dkli.dkh"
+#!
+program
+{
+
+	@toc_file="default.toc"
+    template="/_protected/render/default.htt"
+	@filesviewer="web/docs.induxsoft.net/_apps/docs-viewer/viewer.dkl"
+
+    htmlReplace::txt
+	{
+		txt=replace(txt,"&","&amp;")		
+		txt=replace(txt,"<","&lt;")
+		txt=replace(txt,">","&gt;")
+		return txt
+	}
+
+	renderMarkDown:: input
+	{
+		
+		text html{$'
+			<script src="/js/showdown.min.js"></script>
+			<div id="markdown_viewer" style="overflow: auto;">#<htmlReplace(input)></div>
+			<script>
+				$(document).ready(function(){
+					$("#markdown_viewer").html((new showdown.Converter({"tables":true})).makeHtml($("#markdown_viewer").text()));
+				});
+			</script>
+		'}
+
+		return ftext(html)
+	}
+
+	renderText:: input
+	{
+		text html{$'
+			<pre><code id="text_viewer">#<htmlReplace(input)></code></pre>
+		'}
+
+		return ftext(html)
+	}
+
+	
+
+	html_session::
+	{
+		if not(field.exist(@http_context,"session/user")) 
+		{ 
+			return '<a href="https://induxsoft.net/?idpf=caf8d2ced3e348d6bf47571f92aed99e" 
+					class="nav-link">Iniciar sesión</a>'
+		}
+
+		return '<a href="https://induxsoft.net/?idpf=caf8d2ced3e348d6bf47571f92aed99e" 
+					class="nav-link">'+cut(@@(@http_context,"session/user/name"),15)+'</a>'
+	}
+
+	#!
+	get_tocfile::
+	{
+		f=replace(dir.name(@@(@http_context,"request/headers/document_uri")),"\\","/")
+		
+		while f!="" && f!="/"
+		{
+			if file.exists(path.concat(f,@toc_file)) { return path.concat(f,@toc_file) }
+			f=replace(dir.name(f),"\\","/")
+		}
+		exception{ }
+		return ""
+	}
+
+	#!
+	html_toc:: content
+	{
+		toc=get_tocfile()
+		toc_content=""
+		if toc==""
+		{
+			html='<div class="container-fluid">#<content></div>'
+		}
+		else
+		{
+			toc_content=runscript(toc,"http_context",@http_context)
+			exception{ toc_content=last_error()}
+			html='
+				<div class="container-fluid">
+					<div class="row" style="height:100%;">
+						<nav id="sideTOC" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+							<div class="position-sticky pt-3">
+								#<toc_content>
+							</div>
+						</nav>
+						<div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 id="markdown_container">
+							#<content>
+						</div>
+					</div>
+				</div>
+			'
+		}
+		return ftext(html)
+	}
+
+    root_path=@@(@http_context,"request/headers/document_root")
+    content=@@(@http_context,"response/text")
+    doc_ext=tolower(file.extension(@@(@http_context,'session/resource/fullpath')))
+	doc_name=tolower(file.name(@@(@http_context,'session/resource/fullpath')))
+	doc_folder=""
+	if @@(@http_context,'session/resource/type')=="folder" && doc_ext==""
+	{
+		doc_ext=tolower(file.extension(@@(@http_context,'request/headers/path_translated')))
+		doc_name=tolower(file.name(@@(@http_context,'request/headers/path_translated')))
+		doc_folder=@@(@http_context,'session/resource/fullpath')
+	}
+
+    @http_context<"response/headers/Content-Type">:"text/html;charset=utf-8"
+
+	
+    switch doc_ext
+    {
+        case ".md"
+        {
+            @http_context<"response/text">:renderMarkDown(content)
+			if doc_name=="readme.md" && doc_folder!=""
+			{
+				@http_context<"request/get/uri">:doc_folder
+				@http_context<"response/text">:ftext('
+				<div class="row">
+					<div class="col">
+						#<@@(@http_context,"response/text")>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
+						#<runscript(@filesviewer,"http_context",@http_context)>
+					</div>
+				</div>
+				')
+			}
+        }
+        case ".txt"
+        {
+            @http_context<"response/text">: renderText(content)
+        }
+    }
+
+	@http_context<"response/text">: html_toc(@@(@http_context,"response/text"))
+    @http_context<"response/text">:ftext(file.rtext(path.concat(root_path,template)))
+
+	exception
+	{
+		##
+		div{$"#<last_error()>"}
+		##
+	}
+}

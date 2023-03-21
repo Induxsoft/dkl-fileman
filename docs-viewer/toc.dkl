@@ -1,0 +1,96 @@
+﻿#include "dkli.dkh"
+
+#!
+program "Generador de Tablas de Contenido"
+{
+	#include "functions.dkh"
+    #include "serialize.dkh"
+    #include "toc.config.dk"
+
+    #!
+    createToC::&toc
+    {
+        do createToCLevel(toc,0)
+    }
+
+    #!
+    createToCLevel::&toc,n
+    {
+        tag="li"
+        wrapper="div"
+        max_h=@count(@class_rules)-1
+
+        if n>max_h { n=max_h }
+
+        @selected=@@(toc,'link')==@@(@http_context,'request/headers/request_uri')
+        tag=@@(@item(@class_rules,n),"title/tag")
+        wrapper=@@(@item(@class_rules,n),"wrapper/tag")
+        
+
+        tag_class=ftext(@@(@item(@class_rules,n),'title/class'))
+        wrapper_class=ftext(@@(@item(@class_rules,n),'wrapper/class'))
+
+        ##
+        "#<tag>"(class="#<tag_class>")
+        {
+            ##
+            do createToCItem(toc,n)          
+            ##
+        }
+        ##
+        ref l=list.create_from_fields(toc)
+        if n+1>max_h { wrapper="ul"}
+        has_childs=@false
+        for i=0;i<@count(l) 
+        { 
+            if field.typeof(toc,list.str(l,i))==3 
+            { 
+                has_childs=@true
+                break
+            }
+        }
+
+        if not(has_childs) { return }
+
+        ##
+        "#<wrapper>"(class="#<wrapper_class>")
+        {
+            $""
+            ##
+            for i=0;i<@count(l)
+            {
+                if field.typeof(toc,list.str(l,i))==3
+                {
+                    do createToCLevel(field.obj(toc,list.str(l,i)),n+1)
+                }
+            }
+            ##
+        }
+        ##
+        
+    }
+
+    #!
+    selectClass4Tag::tag,n
+    {
+        return ftext(@@(@item(@class_rules,n),'classes/'+tag))
+        exception { return "" }
+    }
+
+    #!
+    createToCItem::&item,n
+    {
+        if field.exist(item,"link")
+        {
+            ##
+            a(href="#<@@(item,'link')>" class="#<selectClass4Tag('a',n)>"){$"#<@@(item,'title')>"}
+            ##
+        }
+        else
+        {
+            ##
+            span(class="#<selectClass4Tag('span',n)>"){$"#<@@(item,'title')>"}
+            ##
+        }
+    }
+}

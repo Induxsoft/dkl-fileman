@@ -1,0 +1,457 @@
+#include "dkli.dkh"
+#set "meta-xml-declaration" ""
+#!
+program
+{
+	#include "functions.dkh"
+    #include "serialize.dkh"
+    #include "cookies.dkl"
+	#include "webcl.dkh"
+	#include "webauth.dkl"
+	#include "fso/fso.config.dk"
+	#include "fso/fso.dk"
+
+    #include "fileman.config.dk"
+
+    @fileman_cookiename="_fileman_data"
+    @earth_link=""
+    setCookie::
+    {
+        data=@@(@http_context,'request/post_string')
+        do cookie.set(@fileman_cookiename,url_encode(data))
+        @http_context<"response/output">:"text"
+        @http_context<"response/text">:data
+        @http_context<"response/headers/Content-Type">:"application/json"
+    }
+
+    getCookie::
+    {
+        data=url_dcode(cookie.get(@fileman_cookiename))
+
+        if data=="" { return "null" }
+
+        return to.json(from.json(data))
+
+        exception
+        {
+            return "null"
+        }
+    }
+
+    if toupper(@@(@http_context,'request/headers/REQUEST_METHOD'))=="POST"
+    {
+        do setCookie()
+        return
+    }
+
+    printInfo::folder
+    {
+		title=ifstr(@@(folder,'name')=="",'/',@@(folder,'name'))
+        ##
+        div(class="title" id="title")
+        {
+            h2{$"#<title>"}
+			div(class="view_mode")
+			{
+				a(href="#<path.concat(@@(folder,'fullpath'),@fileman_viewtrigger+'?view=icons')>"){img(src="#<@fileman_basepath>/icons/module_view_icon.png")}
+				a(href="#<path.concat(@@(folder,'fullpath'),@fileman_viewtrigger+'?view=details')>"){img(src="#<@fileman_basepath>/icons/list_view_icon.png")}
+			}
+            button(class="upload_file" onclick="fileman.upl_file();"){$"Subir archivo"}
+        }
+        ##
+    }
+    printRoute::path
+    {
+        path=replace(path,"\\","/")
+        if not(contains(path,"/")) || path=="" { return }
+
+        ref lp=split(path,"/")
+        if @count(lp)<1 { return }
+        dirs = @count(lp)
+        if length(trim(path))==1{dirs = 1} 
+        url="/"
+        raiz=@@(@http_context,"request/headers/http_host")
+        ##
+        div(class="route")
+        {
+            ##
+            nm=""
+            for i=0;i<dirs
+            {
+                url=path.concat(url,list.str(lp,i))
+                nm=ifstr(list.str(lp,i)=="",raiz,list.str(lp,i))
+                ##
+                a(class="a_fileman" href="#<path.concat(url,@fileman_viewtrigger+'?view='+@view_style)>"){$"#<nm>"}span{$" > "}
+                ##
+                @earth_link=url
+            }
+            ##
+        }
+		div(class="tool_bar")
+		{
+			div(class="tool_bar_cut tool_bar_btn"){img(src="#<@fileman_basepath>/icons/cut_icon.png" alt="Cortar" title="Cortar" onclick="fileman.onClickCut();")}
+			div(class="tool_bar_copy tool_bar_btn"){img(src="#<@fileman_basepath>/icons/copy_icon.png" alt="Copiar" title="Copiar" onclick="fileman.onClickCopy();")}
+			div(class="tool_bar_paste tool_bar_btn"){img(src="#<@fileman_basepath>/icons/paste_icon.png" alt="Pegar" title="Pegar" onclick="fileman.onClickPaste();")}
+			div(class="tool_bar_new tool_bar_btn" onclick="fileman.do_mkdir();"){img(src="#<@fileman_basepath>/icons/new_folder_icon.png" alt="Nueva carpeta" title="Nueva carpeta")}
+            div(class="tool_bar_paste tool_bar_btn" onclick="fileman.set_file();"){img(src="#<@fileman_basepath>/icons/new_file_icon.png" alt="Nuevo archivo" title="Nuevo archivo")}
+            a(class="tool_bar_properties tool_bar_btn" href='#<path.concat(@earth_link,@fileman_props_trigger)>'){img(src="#<@fileman_basepath>/icons/settings_icon.png" alt="Propiedades" title="Propiedades")}
+		}
+        ##
+    }
+
+    printEarth::
+    {
+        if @earth_link != ""
+        {
+            ##
+            div(class="earth")
+            {
+                a(href="#<@earth_link>"){img(src="#<@fileman_basepath>/icons/earth_icon.png" class="earth")}
+            }
+            ##
+        }
+    }
+
+    printUp::path
+    {
+        
+        path=replace(path,"\\","/")
+        if not(contains(path,"/")) || path=="" || path=="/" { return }
+        path=dir.name(path)
+
+        ##
+        div(class="back")
+        {
+            a(href="#<path.concat(path,@fileman_viewtrigger+'?view='+@view_style)>"){img(src="#<@fileman_basepath>/icons/up_icon.png" class="up")}
+        }
+        ##
+    }
+
+    // Pintar vista en iconos (default)
+    printFolders::&folders
+    {
+        for i=0;i<@count(folders)
+        {
+            ref folder=@item(folders,i)
+            foldername = @@(folder,'name')
+            ##
+			
+			div(class="file_container")
+			{
+				a(href="#<path.concat(@@(folder,'fullpath'),@fileman_viewtrigger+'?view='+@view_style)>" class="file_container_box a_fileman")
+				{
+					img(class="icon folder-icon" src="#<@fileman_basepath>/icons/folder_icon.png")
+					p{$"#<@@(folder,'name')>"}
+				}
+				div(class="controls")
+				{
+                    a(href='#<@@(folder,"fullpath")>#<@fileman_props_trigger>')
+					{
+						img(src="#<@fileman_basepath>/icons/settings_icon.png" alt="Propiedades" title="Propiedades")
+					}
+					a(href="#" onclick="fileman.do_delete('#<foldername>');")
+					{
+						img(src="#<@fileman_basepath>/icons/trash_can_icon.png" alt="Eliminar" title="Eliminar")
+					}
+				}
+			}
+            ##
+        }
+    }
+
+    printFiles::&files
+    {
+        for i=0;i<@count(files)
+        {
+            ref file=@item(files,i)
+            
+            filename=@@(file,'name')
+            ##
+			div(class="file_container")
+			{
+                div(class="controls_above"){
+                    $""
+                    input(type="checkbox" onclick="fileman.checkboxFile(this,'#<filename>');")
+                    ##
+                    if iseditable(@@(file,"fullpath"))
+                    {
+                        ##
+                        a(href="#<@@(file,'fullpath')>#<@@(@fileman_editor_knowed_ext,file.extension(@@(file,'fullpath')))>" class="edit")
+                        {
+                            img(src="#<@fileman_basepath>/icons/pencil_icon.png" alt="Editar" title="Editar")
+                        }
+                        ##
+                    }
+                    ##
+                }
+				a(href="#<@@(file,'fullpath')>" class="file_container_box a_fileman")
+				{
+                    ##
+                    ext = file.extension(@@(file,'name'))
+                    icon = @fileman_basepath+"/icons/.defualt.icon.png"
+                    extIcon =path.concat(path.concat(dir.name(@@(@http_context,'request/headers/path_translated')),"icons"),ext+".icon.png")
+                    
+                    if file.exists(extIcon){
+                        icon = path.concat(path.concat(@fileman_basepath,"icons"),ext+".icon.png")
+                    }
+                    ##
+
+					img(class="icon default-icon" src="#<icon>")
+					p(title="#<@@(file,'name')>"){$"#<@@(file,'name')>"}
+				}
+				div(class="controls")
+				{
+                    a(href='#<@@(file,"fullpath")>#<@fileman_props_trigger>')
+					{
+						img(src="#<@fileman_basepath>/icons/settings_icon.png" alt="Propiedades" title="Propiedades")
+					}
+					a(href="#" onclick='fileman.do_rename("#<filename>");')
+					{
+						img(src="#<@fileman_basepath>/icons/rename_icon.png" alt="Renombrar" title="Renombrar")
+					}
+					a(href='#<@@(file,"fullpath")>#<@fileman_download_trigger>')
+					{
+						img(src="#<@fileman_basepath>/icons/download_icon.png" alt="Descargar" title="Descargar")
+					}
+					a(href="#" onclick='fileman.do_delete("#<filename>");')
+					{
+						img(src="#<@fileman_basepath>/icons/trash_can_icon.png" alt="Eliminar" title="Eliminar")
+					}
+				}
+			}
+            ##
+        }
+    }
+
+    // Pintar vista en lista de detalles
+    printFoldersList::&folders
+    {
+        for i=0;i<@count(folders)
+        {
+            ref folder=@item(folders,i)
+            foldername = @@(folder,'name')
+            ##
+			
+			div(class="file_container_list")
+			{
+				a(href="#<path.concat(@@(folder,'fullpath'),@fileman_viewtrigger+'?view='+@view_style)>" class="file_container_box_list a_fileman")
+				{
+					img(class="icon_list folder-icon_list" src="#<@fileman_basepath>/icons/folder_icon.png")
+					p(class="filename"){$"#<@@(folder,'name')>"}
+                    p(class="lastwrite"){$"#<@@(folder,'lastwrite')>"}
+                    p(class="lastwrite"){$"tipo: #<@@(folder,'type')>"}
+				}
+                div(class="controls_list")
+                {
+                    a(href='#<@@(folder,"fullpath")>#<@fileman_props_trigger>')
+					{
+						img(src="#<@fileman_basepath>/icons/settings_icon.png" alt="Propiedades" title="Propiedades")
+					}
+                    a(href="#" onclick="fileman.do_delete('#<foldername>');")
+                    {
+                        img(src="#<@fileman_basepath>/icons/trash_can_icon.png" alt="Eliminar" title="Eliminar")
+                    }
+                }
+			}
+            ##
+        }
+    }
+
+    printFilesList::&files
+    {
+        for i=0;i<@count(files)
+        {
+            ref file=@item(files,i)
+            //path=@@(file,'path')
+            filename=@@(file,'name')
+            
+            ##
+			div(class="file_container_list")
+			{
+                input(type="checkbox" class="checkbox" onclick="fileman.checkboxFile(this,'#<filename>');")
+				a(href="#<@@(file,'fullpath')>" class="file_container_box_list a_fileman")
+				{
+                    ##
+                    ext = file.extension(@@(file,'name'))
+                    icon = @fileman_basepath+"/icons/.defualt.icon.png"
+                    extIcon =path.concat(path.concat(dir.name(@@(@http_context,'request/headers/path_translated')),"icons"),ext+".icon.png")
+                    
+                    if file.exists(extIcon){
+                        icon = path.concat(path.concat(@fileman_basepath,"icons"),ext+".icon.png")
+                    }
+                    ##
+					img(class="icon_list default-icon_list" src="#<icon>")
+					p(class="filename"){$"#<@@(file,'name')>"}
+                    p(class="lastwrite"){$"#<@@(file,'lastwrite')>"}
+                    p(class="lastwrite"){$"tipo: #<@@(file,'type')>"}
+                    ##
+                    size='bytes'
+                    length = field.num(file,'length')
+                    integer = 1
+
+                    if length>=1073741824 {
+                        size='GB'
+                        integer=1073741824
+                    } 
+                    else if length>=1048576 {
+                        size='MB' 
+                        integer=1048576
+                    } 
+                    else if length>=1024 {
+                        size='KB' 
+                        integer=1024
+                    }
+
+                    length = div(length,integer)
+                    ##
+                    p(class="length"){$"tamaño: #<format(round(length,3),'#,#.0')+' '+size>"}
+				}
+                div(class="controls_list")
+                {
+                    a(href='#<@@(file,"fullpath")>#<@fileman_props_trigger>')
+					{
+						img(src="#<@fileman_basepath>/icons/settings_icon.png" alt="Propiedades" title="Propiedades")
+					}
+                    a(href="#" onclick='fileman.do_rename("#<filename>");')
+                    {
+                        img(src="#<@fileman_basepath>/icons/rename_icon.png" alt="Renombrar" title="Renombrar")
+                    }
+
+                    ##
+                    if iseditable(@@(file,"fullpath"))
+                    {
+                        ##
+                        a(href='#<@@(file,"fullpath")>#<@@(@fileman_editor_knowed_ext,file.extension(@@(file,"fullpath")))>')
+                        {
+                            img(src="#<@fileman_basepath>/icons/pencil_icon.png" alt="Editar" title="Editar")
+                        }
+                        ##
+                    }
+                    ##
+                    
+                    ##
+                    if not(isanyword(tolower(file.extension(@@(file,"fullpath"))),@fileman_nodownloadable))
+                    {
+                        ##
+                        a(href='#<@@(file,"fullpath")>#<@fileman_download_trigger>')
+                        {
+                            img(src="#<@fileman_basepath>/icons/download_icon.png" alt="Descargar" title="Descargar")
+                        }
+                        ##
+                    }
+                    ##
+
+                    
+                    a(href="#" onclick='fileman.do_delete("#<filename>");')
+                    {
+                        img(src="#<@fileman_basepath>/icons/trash_can_icon.png" alt="Eliminar" title="Eliminar")
+                    }
+                }
+			}
+            ##
+        }
+    }
+
+    iseditable::f
+    {
+        return field.exist(@fileman_editor_knowed_ext, tolower( file.extension(f)))
+    }
+    
+    //Recuperar manifiesto de privilegios del recurso solicitado
+	base_path=field.dstr(@http_context,"request/headers/document_root","")
+	uri=dir.name(list.str(split(field.dstr(@http_context,"request/headers/request_uri","/"),"?"),0))
+    
+    if field.exist(@http_context,"request/get/base_path") && @dklfso_multisites { base_path=@@(@http_context,"request/get/base_path") }
+    if field.exist(@http_context,"request/get/uri") { uri=@@(@http_context,"request/get/uri") }
+    
+    if field.exist(@http_context,"request/get/host") && @dklfso_multisites { base_path= path.concat(@dklfso_websites_path,@@(@http_context,"request/get/host")) }
+    
+	ref res_info=dklfso.createObjectInfo(base_path,uri)
+    
+    if isnull(res_info){ do rise_error(0,"Recurso no encontrado " + base_path+" "+uri)}
+    if @@(res_info,"type")!="folder" { do rise_error(0,"No es un directorio")}
+
+    new p 
+    { 
+        @"base_path": base_path
+        @"uri"      : uri
+
+        @"filter"   : field.dstr(@http_context,"request/get/filter","*.*")
+        @"search"   : field.dstr(@http_context,"request/get/search","")
+        @"deep"     : field.dnum(@http_context,"request/get/deep",0)
+        @"mode"     : field.dnum(@http_context,"request/get/mode",0) // 0-directorios y archivos, 1-solo directorios, 2-solo archivos, 3-solo resultados de búsqueda de archivos
+    }
+    
+    
+
+    new res { @"success": @true }
+    ref d=dklfso.list(p)
+    ref folders=@null
+    ref files=@null
+
+    @view_style=field.dstr(@http_context,"request/get/view","icons")
+    
+    if @@(p,"mode")==3 { ref files=@@(p,"&found") }
+    else 
+    { 
+        ref folders=@@(d,"&folders")
+        ref files=@@(d,"&files")
+    }
+
+    ##
+    div(class="fileman-viewfolder" name="viewfolder")
+    {
+        $'
+        <link href="#<@fileman_basepath>/css/fileman.css" rel="stylesheet">
+        <script type="text/javascript" src="#<@fileman_basepath>/js/fileman.js"></script>
+        <script>
+            fileman.folderPath="#<ifstr(@@(res_info,"$fullpath")=="","/",@@(res_info,"$fullpath")+ifstr(length(trim(@@(res_info,"$fullpath")))==1,"","/"))>";
+            fileman.currentURL="#<path.concat(@@(res_info,"$fullpath"),@fileman_viewtrigger)>";
+            fileman.cookieData=#<getCookie()>;
+            fileman.codeExts=#<to.json(@fileman_editor_knowed_ext)>;
+            fileman.files=#<to.json(files)>
+        </script>
+		'
+        form(enctype="multipart/form-data" method="POST" id="formData")
+        {
+            input(type="file" id="input_file" name="fileuploader" style="display:none" multiple=""){}
+        }
+        
+		div(class="route_navigation"){
+        ##
+		do printUp(@@(res_info,"fullpath"))
+        do printRoute(@@(res_info,"fullpath"))
+        do printEarth()
+		##
+		}
+        ##
+        do printInfo(res_info)
+
+        switch @view_style
+        {
+            case "icons"
+            {
+                ##
+                div(class="main_body" id="mainBody"){
+                ##
+                do printFolders(folders)
+                do printFiles(files)
+                ##
+                }
+                ##
+            }
+            case "details"
+            {
+                ##
+                div(class="main_body_list" id="mainBody"){
+                ##
+                do printFoldersList(folders)
+                do printFilesList(files)
+                ##
+                }
+                ##
+            }
+        }
+    }
+    ##
+}

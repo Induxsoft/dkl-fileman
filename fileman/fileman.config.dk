@@ -1,0 +1,27 @@
+﻿#include "dkli.dkh"
+#!
+module "Configuración de FileMan"
+{
+
+    @fileman_basepath="/apps/fileman" //No debe terminar la ruta con el caracter /
+    @fileman_viewtrigger="/.folderview"
+    @fileman_props_trigger="/.meta"
+    @fileman_download_trigger="/.download" ///.download
+
+    new @fileman_editor_knowed_ext
+    {
+        @".txt":"/.editcode"
+        @".dk":"/.editcode"
+        @".dkl":"/.editcode"
+        @".dkh":"/.editcode"
+        @".js":"/.editcode"
+        @".json":"/.editcode"
+        @".html":"/.editcode"
+        @".htm":"/.editcode"
+        @".md":"/.editcode"
+        @".css":"/.editcode"
+        @".toc":"/.editcode"
+    }
+
+    @fileman_nodownloadable=".dk,.dkh,.dkl"
+}

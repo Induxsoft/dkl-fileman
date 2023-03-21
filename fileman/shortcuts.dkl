@@ -1,0 +1,34 @@
+#include "dkli.dkh"
+#set "meta-xml-declaration" ""
+#!
+program
+{
+	#include "functions.dkh"
+    #include "serialize.dkh"
+    #include "cookies.dkl"
+	#include "webcl.dkh"
+	#include "webauth.dkl"
+	#include "fso/fso.config.dk"
+	#include "fso/fso.dk"
+
+    #include "fileman.config.dk"
+
+    do _map_function(_import_library("System.Net.dll"),"System.Net.WebUtility","UrlDecode","net.urldecode","System.String","$")
+    base_path=field.dstr(@http_context,"request/headers/document_root","")
+	uri=net.urldecode(list.str(split(field.dstr(@http_context,"request/headers/request_uri","/"),"?"),0))
+
+    if field.exist(@http_context,"request/get/base_path") && @dklfso_multisites { base_path=@@(@http_context,"request/get/base_path") }
+    if field.exist(@http_context,"request/get/uri") { uri=@@(@http_context,"request/get/uri") }
+
+    if field.exist(@http_context,"request/get/host") && @dklfso_multisites { base_path= path.concat(@dklfso_websites_path,@@(@http_context,"request/get/host")) }
+
+	ref res_info=dklfso.createObjectInfo(base_path,uri)
+
+    if isnull(res_info){ do rise_error(0,"Recurso no encontrado " + path.concat(base_path,uri))}
+    if @@(res_info,"type")!="file" { do rise_error(0,"No es un archivo")}
+
+    ref info=from.json(file.rtext(path.concat(base_path,uri)))   
+
+    @http_context<"response/headers/Location">:@@(info,"href")
+
+}

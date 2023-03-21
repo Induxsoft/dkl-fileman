@@ -1,0 +1,127 @@
+#include "dkli.dkh"
+#set "meta-xml-declaration" ""
+#!
+program "Editor de archivos basado en Monaco"
+{
+    #include "functions.dkh"
+    #include "serialize.dkh"
+	#include "webcl.dkh"
+	#include "webauth.dkl"
+	#include "fso/fso.config.dk"
+	#include "fso/fso.dk"
+
+    
+
+    new ext_lang
+    {
+        @".html":"html"
+        @".htm":"html"
+        @".js":"javascript"
+        @".css":"css"
+        @".xml":"xml"
+        @".dkl":"dkl"
+        @".dk":"dkl"
+        @".dkh":"dkl"
+        @".md":"markdown"
+        @".json":"json"
+        @".jsn":"json"
+    }
+
+    ref languages=from.json('
+    [
+        "text",
+        "dkl",
+        "html",
+        "markdown",
+        "css",
+        "javascript",
+        "json",
+        "xml"
+    ]')
+
+    @monaco_path="/apps/monaco"
+    @monaco_margin=220
+    @folderview = ".folderview"
+  
+    //Recuperar manifiesto de privilegios del recurso solicitado
+
+    ref p=dklfso.parseRequest()
+
+    base_path:p<"base_path">
+    uri:p<"uri">
+
+    lang=field.dstr(ext_lang,file.extension(uri),"")
+	ref res_info=dklfso.createObjectInfo(base_path,uri)
+    url_path = replace(field.dstr(res_info,"path",""),"\\","/")
+    earth_link = field.dstr(res_info,"fullpath","")
+
+    if isnull(res_info){ do rise_error(0,"Recurso no encontrado " + base_path+" "+uri)}
+    
+
+    if not(dklfso.auth(res_info,@op_id_dkl_fso_overwrite)) { do rise_error(0,"No está autorizado")}
+
+    if @@(res_info,"type")!="file" { do rise_error(0,"No es un archivo")}
+
+    text_buff=file.rtext(path.concat(base_path,uri))
+    //Fix Browser bug with string </script> in javascript text code
+    s_code=replace(to.json(text_buff),"</script>",'</"+"script>')
+    #$
+    div(id="_monaco_editor")
+    {
+        link(rel="stylesheet" href="#<@monaco_path>/css/monaco.css")
+        div(class="controls"){
+            a(href="#" onclick='quit("#<path.concat(url_path,@folderview)>");'){img(title="Salir" class="control_icon quit" src="#<@monaco_path>/icons/arrow_back_outline_icon.png"){}}
+            div(class="path")
+            {
+                span{$"#<uri>"}
+            }
+            div(class="controls_buton")
+            {
+                a(href="#<earth_link>" target="_blank"){img(src="#<@monaco_path>/icons/earth_icon.png" class="control_icon earth" title="Vista previa")}
+                a(href="#" onclick="saveText()"){img(title="Guardar" class="control_icon save" src="#<@monaco_path>/icons/save_outline_icon.png"){}}
+            }
+            div(class="lang" align="right")
+            {
+                select(id="sel_lang" onchange="change_lang($('#sel_lang').val());" )
+                {
+                    ##
+                    for i=0;i<@count(languages)
+                    {
+                        lselected=list.str(languages,i)==lang
+                        ##
+                        option(value="#<list.str(languages,i)>" "#<ifstr(lselected,'selected','')>"="true" ){$"#<ifstr(list.str(languages,i)=='','text',list.str(languages,i))>"}
+                        ##
+                    }
+                    ##
+                }
+            }
+            
+        }
+        
+        div(id="_code_editor")
+        {  
+            script
+            {$'
+                var _monacoEditor=null;
+                var _monacoIsDirty=false;
+                var _monaco_uri="#<uri>/set.fso";
+                var _monaco_margin=#<@monaco_margin>;
+                var _monaco_code=#<s_code>;
+                var _monaco_lang="#<lang>";
+            '}
+
+            script{$"var require = { paths: { 'vs': '#<@monaco_path>/min/vs' } };"}
+            script(src="#<@monaco_path>/min/vs/loader.js"){$""}
+            script(src="#<@monaco_path>/min/vs/editor/editor.main.nls.js"){$""}
+            script(src="#<@monaco_path>/min/vs/editor/editor.main.js"){$""}
+            script(src="#<@monaco_path>/js/def-dkl.js"){$""}
+            script(src="#<@monaco_path>/js/monaco.js"){$""}
+        }
+    }
+    ##
+    exception
+    {
+        ##
+        p{$"#<last_error()>"}
+    }
+}

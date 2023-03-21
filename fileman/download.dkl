@@ -1,0 +1,41 @@
+	
+    #include "dkli.dkh"
+    #set "meta-xml-declaration" ""
+    #!
+    program ""
+    {
+        #include "functions.dkh"
+        #include "serialize.dkh"
+        #include "webauth.dkl"
+        #include "fso/fso.config.dk"
+        #include "fso/fso.dk"
+
+        #include "fileman.config.dk"
+
+        do _map_function(_import_library("System.Net.dll"),"System.Net.WebUtility","UrlDecode","net.urldecode","System.String","$")
+		
+		@http_context<"request/headers/request_uri">:net.urldecode(field.dstr(@http_context,"request/headers/request_uri","/"))
+
+        base_path=field.dstr(@http_context,"request/headers/document_root","")
+        uri=dir.name(list.str(split(field.dstr(@http_context,"request/headers/request_uri","/"),"?"),0))
+
+        if field.exist(@http_context,"request/get/base_path") && @dklfso_multisites {base_path=@@(@http_context,"request/get/base_path") }
+        if field.exist(@http_context,"request/get/uri") { uri=@@(@http_context,"request/get/uri") }
+
+        if field.exist(@http_context,"request/get/host") && @dklfso_multisites { base_path= path.concat(@dklfso_websites_path,@@(@http_context,"request/get/host")) }
+
+        ref res_info=dklfso.createObjectInfo(base_path,uri)
+
+        if isnull(res_info){ do rise_error(0,"Recurso no encontrado " + base_path+" "+uri)}
+        if @@(res_info,"type")!="file" { do rise_error(0,"No es un archivo")}
+
+        if isanyword(tolower(file.extension(file.extension(@@(res_info,"name")))),@dklfso_danger_files_ext) &&  not(dklfso.auth(res_info,@op_id_dkl_fso_overwrite)) { do rise_error(0,"No está autorizado")}
+
+        archivo = path.concat(base_path, @@(res_info,"fullpath"))
+
+        @http_context<"response/headers/content-type"> : "application/octet-stream"
+        @http_context<"response/headers/content-disposition"> : 'attachment; filename="'+@@(res_info,"name")+'"'
+        @http_context<"response/output">:"binary"
+        @http_context<"response/binary*">: file.rbytes(archivo)
+
+    }

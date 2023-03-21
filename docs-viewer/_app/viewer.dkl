@@ -1,0 +1,177 @@
+#include "dkli.dkh"
+#set "meta-xml-declaration" ""
+#!
+program
+{
+	#include "functions.dkh"
+    #include "serialize.dkh"
+    #include "cookies.dkl"
+	#include "webcl.dkh"
+	#include "webauth.dkl"
+	#include "fso/fso.config.dk"
+	#include "fso/fso.dk"
+
+    #include "../fileman/fileman.config.dk"
+
+    
+    @hide_extensions=".toc,.bak"
+    @icons_folder=path.concat(dir.name(dir.name(@@(@http_context,'request/headers/path_translated'))),"fileman/icons")
+    
+    #!
+    printRoute::path
+    {
+        path=path.concat(@@(@http_context,"request/headers/http_host"),path)
+        
+        path=replace(path,"\\","/")
+        if not(contains(path,"/")) || path=="" { return }
+
+        ref lp=split(path,"/")
+        if @count(lp)<1 { return }
+        dirs = @count(lp)
+        if length(trim(path))==1{dirs = 1} 
+        url="/"
+        ##
+        div(class="route")
+        {
+            ##
+            nm=""
+            for i=0;i<dirs-1
+            {
+                nm=list.str(lp,i)
+                if nm=="" { break }
+                ##
+                a(href="#<url>"){$"#<nm>"}span{$" > "}
+                ##
+                url=path.concat(url,list.str(lp,i+1)+"/")
+            }
+            ##
+        }
+    }
+
+    // Pintar vista en iconos (default)
+    #!
+    printFolders::&folders
+    {
+        for i=0;i<@count(folders)
+        {
+            ref folder=@item(folders,i)
+            foldername = @@(folder,'name')
+            ##
+			
+			div(class="file_container")
+			{
+				a(href="#<@@(folder,'fullpath')+'/'>" class="file_container_box")
+				{
+					img(class="icon folder-icon" src="#<@fileman_basepath>/icons/folder_icon.png")
+					p{$"#<@@(folder,'name')>"}
+				}
+			}
+            ##
+        }
+    }
+
+    #!
+    printFiles::&files
+    {
+        for i=0;i<@count(files)
+        {
+            ref file=@item(files,i)
+            
+            filename=@@(file,'name')
+            
+            if not(isanyword(tolower(file.extension(filename)),@hide_extensions))
+            {
+            ##
+                div(class="file_container")
+                {
+                    a(href="#<replace(@@(file,'fullpath'),'#','%23')>" class="file_container_box")
+                    {
+                        ##
+                        ext = file.extension(@@(file,'name'))
+                        icon = @fileman_basepath+"/icons/.defualt.icon.png"
+                        extIcon =path.concat(@icons_folder,ext+".icon.png")
+                        
+                        if file.exists(extIcon){
+                            icon = path.concat(path.concat(@fileman_basepath,"icons"),ext+".icon.png")
+                        }
+                        ##
+
+                        img(class="icon default-icon" src="#<icon>")
+                        p(title="#<@@(file,'name')>"){$"#<file.justname(@@(file,'name'))>"}
+                    }
+                    
+                }
+                ##
+            }
+        }
+    }
+
+    #!
+    //Recuperar manifiesto de privilegios del recurso solicitado
+	base_path=field.dstr(@http_context,"request/headers/document_root","")
+	uri=list.str(split(field.dstr(@http_context,"request/headers/request_uri","/"),"?"),0)
+
+    if field.exist(@http_context,"request/get/base_path") && @dklfso_multisites { base_path=@@(@http_context,"request/get/base_path") }
+    if field.exist(@http_context,"request/get/uri") { uri=@@(@http_context,"request/get/uri") }
+
+    if field.exist(@http_context,"request/get/host") && @dklfso_multisites { base_path= path.concat(@dklfso_websites_path,@@(@http_context,"request/get/host")) }
+
+	ref res_info=dklfso.createObjectInfo(base_path,uri)
+
+    if isnull(res_info){ do rise_error(0,"Recurso no encontrado " + base_path+" "+uri)}
+    if @@(res_info,"type")!="folder" { do rise_error(0,"No es un directorio")}
+
+    
+    new p 
+    { 
+        @"base_path": base_path
+        @"uri"      : uri
+
+        @"filter"   : field.dstr(@http_context,"request/get/filter","*.*")
+        @"search"   : field.dstr(@http_context,"request/get/search","")
+        @"deep"     : field.dnum(@http_context,"request/get/deep",0)
+        @"mode"     : field.dnum(@http_context,"request/get/mode",0) // 0-directorios y archivos, 1-solo directorios, 2-solo archivos, 3-solo resultados de búsqueda de archivos
+    }
+
+    
+
+    new res { @"success": @true }
+    ref d=dklfso.list(p)
+    ref folders=@null
+    ref files=@null
+
+    @view_style=field.dstr(@http_context,"request/get/view","icons")
+    
+    if @@(p,"mode")==3 { ref files=@@(p,"&found") }
+    else 
+    { 
+        ref folders=@@(d,"&folders")
+        ref files=@@(d,"&files")
+    }
+
+    ##
+    div(class="fileman-viewfolder" name="viewfolder")
+    {
+        $'
+        <link href="#<@fileman_basepath>/css/fileman.css" rel="stylesheet">
+		'
+		div(class="route_navigation")
+        {
+            $""
+            ##
+            //do printRoute(@@(res_info,"fullpath"))
+            ##
+		}
+      
+        div(class="main_body" id="mainBody")
+        {
+            ##
+            
+            do printFolders(folders)
+            do printFiles(files)
+            ##
+        }
+        
+    }
+ 
+}

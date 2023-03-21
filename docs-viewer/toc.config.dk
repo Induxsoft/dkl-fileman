@@ -1,0 +1,23 @@
+#!
+@class_selected="selected"
+@selected=@false //Es @true cuando la URL del navegador coincide con el link de un elemento de la TOC
+
+ref @class_rules=from.json('
+[
+    {
+        "title":{"tag":"h4","class":"toc_1 #<ifstr(@selected,@class_selected,\'\')>"},
+        "wrapper":{"tag":"div","class":"wrappertoc_1 #<ifstr(@selected,@class_selected,\'\')>"},
+        "classes":{"a":"atoc1"}
+    },
+    {
+        "title":{"tag":"h6","class":"toc_3 #<ifstr(@selected,@class_selected,\'\')>"},
+        "wrapper":{"tag":"ul"},
+        "classes":{"a":"atoc3"}
+    },
+    {
+        "title":{"tag":"li","class":"toc_4 #<ifstr(@selected,@class_selected,\'\')>"},
+        "wrapper":{"tag":"ul"},
+        "classes":{"a":"atoc4"}
+    }
+]
+')
