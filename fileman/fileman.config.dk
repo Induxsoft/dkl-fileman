@@ -2,11 +2,12 @@
 #!
 module "Configuración de FileMan"
 {
-
+    @fileman_websencia_render=@true //Procesar archivo websencia .jsnwm
     @fileman_basepath="/apps/fileman" //No debe terminar la ruta con el caracter /
     @fileman_viewtrigger="/.folderview"
     @fileman_props_trigger="/.meta"
     @fileman_download_trigger="/.download" ///.download
+    @fileman_default_view="icons"   //icons, details, cards
 
     new @fileman_editor_knowed_ext
     {

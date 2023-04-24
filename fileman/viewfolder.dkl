@@ -53,10 +53,79 @@ program
             h2{$"#<title>"}
 			div(class="view_mode")
 			{
-				a(href="#<path.concat(@@(folder,'fullpath'),@fileman_viewtrigger+'?view=icons')>"){img(src="#<@fileman_basepath>/icons/module_view_icon.png")}
-				a(href="#<path.concat(@@(folder,'fullpath'),@fileman_viewtrigger+'?view=details')>"){img(src="#<@fileman_basepath>/icons/list_view_icon.png")}
+				a(href="#<path.concat(@@(folder,'fullpath'),@fileman_viewtrigger+'?view=icons')>" title="Iconos")
+                {
+                    svg(xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-grid-3x3-gap-fill" viewBox="0 0 16 16"){
+                        path(d="M1 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V2zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V2zM1 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V7zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V7zM1 12a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-2zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-2zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2z")
+                    }
+                }
+				a(href="#<path.concat(@@(folder,'fullpath'),@fileman_viewtrigger+'?view=details')>" title="Lista")
+                {
+                    svg(xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-list-ul" viewBox="0 0 16 16"){
+                        path("fill-rule"="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm-3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2z")
+                    }
+                }
+                a(href="#<path.concat(@@(folder,'fullpath'),@fileman_viewtrigger+'?view=cards')>" title="Tarjetas")
+                {
+                    svg(xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-grid-fill" viewBox="0 0 16 16"){
+                        path(d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zm8 0A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm-8 8A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm8 0A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3z")
+                    }
+                }
 			}
-            button(class="upload_file" onclick="fileman.upl_file();"){$"Subir archivo"}
+            div(id="upload_file_container")
+            {
+                button(class="upload_file" id="up_file")
+                {
+                    svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-arrow-up-fill" viewBox="0 0 16 16"){path(d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM7.5 6.707 6.354 7.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707z")}
+                    $" Subir"
+                }
+                ul(id="upload_options")
+                {
+                    li(onclick="fileman.upl_file('file');")
+                    {
+                        svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#555" class="bi bi-file-earmark-fill" viewBox="0 0 16 16"){path(d="M4 0h5.293A1 1 0 0 1 10 .293L13.707 4a1 1 0 0 1 .293.707V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm5.5 1.5v2a1 1 0 0 0 1 1h2l-3-3z")}
+                        $"Subir archivo"
+                    }
+                    li(onclick="fileman.upl_folder();")
+                    {
+                        svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#555" class="bi bi-folder-fill" viewBox="0 0 16 16"){path(d="M9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.825a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3zm-8.322.12C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139z")}
+                        $"Subir carpeta"
+                    }
+                    li(onclick="fileman.upl_file_zip();")
+                    {
+                        svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#555" class="bi bi-file-zip-fill" viewBox="0 0 16 16")
+                        {
+                            path(d="M8.5 9.438V8.5h-1v.938a1 1 0 0 1-.03.243l-.4 1.598.93.62.93-.62-.4-1.598a1 1 0 0 1-.03-.243z")
+                            path(d="M4 0h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm2.5 8.5v.938l-.4 1.599a1 1 0 0 0 .416 1.074l.93.62a1 1 0 0 0 1.109 0l.93-.62a1 1 0 0 0 .415-1.074l-.4-1.599V8.5a1 1 0 0 0-1-1h-1a1 1 0 0 0-1 1zm1-5.5h-1v1h1v1h-1v1h1v1H9V6H8V5h1V4H8V3h1V2H8V1H6.5v1h1v1z")
+                        }
+                        $"Subir ZIP y descomprimir"
+                    }
+                    li(onclick="fileman.upl_file_websencia();")
+                    {
+                        svg(width="16" height="15" viewBox="0 0 136.24687 116.78399" version="1.1" id="svg5" "xml:space"="preserve" xmlns="http://www.w3.org/2000/svg" "xmlns:svg"="http://www.w3.org/2000/svg")
+                        {
+                            g(id="layer1" transform="translate(-32.965062,-56.286722)")
+                            {
+                                path(style="fill:#555;stroke-width:0.443912" d="m 72.083142,171.46276 -1.701411,-1.61761 -0.875492,-3.96086 c -0.481554,-2.17848 -2.472183,-14.20707 -4.423687,-26.73017 -3.870803,-24.83949 -3.581244,-23.42252 -4.627711,-22.64575 -5.995576,4.44983 -14.632333,7.43972 -24.715045,8.5559 l -2.774734,0.3069 6.452942,-5.91475 C 52.84003,107.15397 56.576683,102.13989 66.650851,82.913712 71.220422,74.192831 74.861633,70.799854 80.195762,70.292157 l 2.457282,-0.233855 1.081819,0.927331 1.081832,0.927342 -0.114633,5.15883 c -0.06306,2.83738 -0.306267,7.310554 -0.540561,9.940413 -0.802986,9.014371 -0.212467,25.965802 1.31668,37.795402 l 0.441271,3.4137 0.886779,0.91244 0.886777,0.9124 1.667227,-1.95616 c 1.821775,-2.13741 8.022844,-14.6873 12.984245,-26.27778 8.51477,-19.891555 14.59041,-30.124003 19.79076,-33.331166 l 1.88441,-1.162168 2.16346,0.218772 2.16344,0.218772 1.26797,1.278375 c 2.46458,2.484834 2.60221,4.615087 0.90377,13.989103 -1.8594,10.262532 -3.51489,30.965892 -3.50447,43.826682 0.008,10.46344 0.34616,11.0862 3.86661,7.13031 9.46967,-10.64094 21.96822,-35.783426 35.96328,-72.344898 2.91982,-7.627891 2.9753,-7.476199 1.06432,2.909769 -9.12967,49.618549 -27.45276,90.318049 -44.70912,99.308519 l -3.1599,1.64624 -2.68197,0.0286 -2.68194,0.0286 -1.45976,-1.09555 c -4.35244,-3.26672 -7.06138,-17.5003 -6.33428,-33.28224 l 0.30404,-6.59921 -0.94642,0.90136 c -1.57565,1.50063 -3.62249,5.56597 -12.581832,24.98968 -9.371652,20.31754 -9.176883,19.97683 -12.302018,21.52152 l -2.163649,1.06942 -2.703312,0.004 -2.703324,0.004 -1.701415,-1.61762 z" id="path1581")
+                            }
+                        }
+                        $"Procesar archivo Websencia"
+                    }
+                }
+            }
+            form(id="input_search_container" action="./.folderview" method="GET")
+            {
+                #! mode = field.dnum(@http_context,"request/get/mode",0)
+
+                #$ input(type="search" name="search" placeholder="Buscar..." id="input_search" value="#<@@(@http_context,'request/get/search')>")
+                button(id="input_search_btn" type="submit")
+                {
+                    svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"){path(d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z")}
+                }
+                input(type="hidden" name="view" value="#<@view_style>")
+                input(type="hidden" id="filter_mode" name="mode" value="0")
+                input(type="hidden" id="deep_filter" value="99")
+            }
         }
         ##
     }
@@ -89,12 +158,53 @@ program
         }
 		div(class="tool_bar")
 		{
-			div(class="tool_bar_cut tool_bar_btn"){img(src="#<@fileman_basepath>/icons/cut_icon.png" alt="Cortar" title="Cortar" onclick="fileman.onClickCut();")}
-			div(class="tool_bar_copy tool_bar_btn"){img(src="#<@fileman_basepath>/icons/copy_icon.png" alt="Copiar" title="Copiar" onclick="fileman.onClickCopy();")}
-			div(class="tool_bar_paste tool_bar_btn"){img(src="#<@fileman_basepath>/icons/paste_icon.png" alt="Pegar" title="Pegar" onclick="fileman.onClickPaste();")}
-			div(class="tool_bar_new tool_bar_btn" onclick="fileman.do_mkdir();"){img(src="#<@fileman_basepath>/icons/new_folder_icon.png" alt="Nueva carpeta" title="Nueva carpeta")}
-            div(class="tool_bar_paste tool_bar_btn" onclick="fileman.set_file();"){img(src="#<@fileman_basepath>/icons/new_file_icon.png" alt="Nuevo archivo" title="Nuevo archivo")}
-            a(class="tool_bar_properties tool_bar_btn" href='#<path.concat(@earth_link,@fileman_props_trigger)>'){img(src="#<@fileman_basepath>/icons/settings_icon.png" alt="Propiedades" title="Propiedades")}
+            div(class="tool_bar_btn tool_bar_delete" alt="Eliminar" title="Eliminar" onclick="fileman.onClickDelete();")
+            {
+                svg(xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"){
+                    path(d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z")
+                    path("fill-rule"="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z")
+                }
+            }
+            div(class="tool_bar_cut tool_bar_btn" alt="Cortar" title="Cortar" onclick="fileman.onClickCut();")
+            {
+                svg(xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-scissors" viewBox="0 0 16 16"){
+                    path(d="M3.5 3.5c-.614-.884-.074-1.962.858-2.5L8 7.226 11.642 1c.932.538 1.472 1.616.858 2.5L8.81 8.61l1.556 2.661a2.5 2.5 0 1 1-.794.637L8 9.73l-1.572 2.177a2.5 2.5 0 1 1-.794-.637L7.19 8.61 3.5 3.5zm2.5 10a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0zm7 0a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0z")
+                }
+            }
+            div(class="tool_bar_copy tool_bar_btn" alt="Copiar" title="Copiar" onclick="fileman.onClickCopy();")
+            {
+                svg(xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-files" viewBox="0 0 16 16"){
+                    path(d="M13 0H6a2 2 0 0 0-2 2 2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2 2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 13V4a2 2 0 0 0-2-2H5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1zM3 4a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z")
+                }
+            }
+            div(class="tool_bar_paste tool_bar_btn" alt="Pegar" title="Pegar" onclick="fileman.onClickPaste();")
+            {
+                svg(xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-clipboard2" viewBox="0 0 16 16"){
+                    path(d="M3.5 2a.5.5 0 0 0-.5.5v12a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-12a.5.5 0 0 0-.5-.5H12a.5.5 0 0 1 0-1h.5A1.5 1.5 0 0 1 14 2.5v12a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 14.5v-12A1.5 1.5 0 0 1 3.5 1H4a.5.5 0 0 1 0 1h-.5Z")
+                    path(d="M10 .5a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5.5.5 0 0 1-.5.5.5.5 0 0 0-.5.5V2a.5.5 0 0 0 .5.5h5A.5.5 0 0 0 11 2v-.5a.5.5 0 0 0-.5-.5.5.5 0 0 1-.5-.5Z")
+                }
+            }
+            div(class="tool_bar_new tool_bar_btn" alt="Nueva carpeta" title="Nueva carpeta" onclick="fileman.do_mkdir();")
+            {
+                svg(xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-folder-plus" viewBox="0 0 16 16"){
+                    path(d="m.5 3 .04.87a1.99 1.99 0 0 0-.342 1.311l.637 7A2 2 0 0 0 2.826 14H9v-1H2.826a1 1 0 0 1-.995-.91l-.637-7A1 1 0 0 1 2.19 4h11.62a1 1 0 0 1 .996 1.09L14.54 8h1.005l.256-2.819A2 2 0 0 0 13.81 3H9.828a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 6.172 1H2.5a2 2 0 0 0-2 2zm5.672-1a1 1 0 0 1 .707.293L7.586 3H2.19c-.24 0-.47.042-.683.12L1.5 2.98a1 1 0 0 1 1-.98h3.672z")
+                    path(d="M13.5 10a.5.5 0 0 1 .5.5V12h1.5a.5.5 0 1 1 0 1H14v1.5a.5.5 0 1 1-1 0V13h-1.5a.5.5 0 0 1 0-1H13v-1.5a.5.5 0 0 1 .5-.5z")
+                }
+            }
+            div(class="tool_bar_paste tool_bar_btn" alt="Nuevo archivo" title="Nuevo archivo" onclick="fileman.set_file();")
+            {
+                svg(xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-file-earmark-plus" viewBox="0 0 16 16"){
+                    path(d="M8 6.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 .5-.5z")
+                    path(d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z")
+                }
+            }
+            a(class="tool_bar_properties tool_bar_btn" alt="Propiedades" title="Propiedades" href='#<path.concat(@earth_link,@fileman_props_trigger)>')
+            {
+                svg(xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16"){
+                    path(d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z")
+                    path(d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z")
+                }
+            }
 		}
         ##
     }
@@ -106,7 +216,12 @@ program
             ##
             div(class="earth")
             {
-                a(href="#<@earth_link>"){img(src="#<@fileman_basepath>/icons/earth_icon.png" class="earth")}
+                a(href="#<@earth_link>")
+                {
+                    svg(xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-globe2" viewBox="0 0 16 16"){
+                        path(d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm7.5-6.923c-.67.204-1.335.82-1.887 1.855-.143.268-.276.56-.395.872.705.157 1.472.257 2.282.287V1.077zM4.249 3.539c.142-.384.304-.744.481-1.078a6.7 6.7 0 0 1 .597-.933A7.01 7.01 0 0 0 3.051 3.05c.362.184.763.349 1.198.49zM3.509 7.5c.036-1.07.188-2.087.436-3.008a9.124 9.124 0 0 1-1.565-.667A6.964 6.964 0 0 0 1.018 7.5h2.49zm1.4-2.741a12.344 12.344 0 0 0-.4 2.741H7.5V5.091c-.91-.03-1.783-.145-2.591-.332zM8.5 5.09V7.5h2.99a12.342 12.342 0 0 0-.399-2.741c-.808.187-1.681.301-2.591.332zM4.51 8.5c.035.987.176 1.914.399 2.741A13.612 13.612 0 0 1 7.5 10.91V8.5H4.51zm3.99 0v2.409c.91.03 1.783.145 2.591.332.223-.827.364-1.754.4-2.741H8.5zm-3.282 3.696c.12.312.252.604.395.872.552 1.035 1.218 1.65 1.887 1.855V11.91c-.81.03-1.577.13-2.282.287zm.11 2.276a6.696 6.696 0 0 1-.598-.933 8.853 8.853 0 0 1-.481-1.079 8.38 8.38 0 0 0-1.198.49 7.01 7.01 0 0 0 2.276 1.522zm-1.383-2.964A13.36 13.36 0 0 1 3.508 8.5h-2.49a6.963 6.963 0 0 0 1.362 3.675c.47-.258.995-.482 1.565-.667zm6.728 2.964a7.009 7.009 0 0 0 2.275-1.521 8.376 8.376 0 0 0-1.197-.49 8.853 8.853 0 0 1-.481 1.078 6.688 6.688 0 0 1-.597.933zM8.5 11.909v3.014c.67-.204 1.335-.82 1.887-1.855.143-.268.276-.56.395-.872A12.63 12.63 0 0 0 8.5 11.91zm3.555-.401c.57.185 1.095.409 1.565.667A6.963 6.963 0 0 0 14.982 8.5h-2.49a13.36 13.36 0 0 1-.437 3.008zM14.982 7.5a6.963 6.963 0 0 0-1.362-3.675c-.47.258-.995.482-1.565.667.248.92.4 1.938.437 3.008h2.49zM11.27 2.461c.177.334.339.694.482 1.078a8.368 8.368 0 0 0 1.196-.49 7.01 7.01 0 0 0-2.275-1.52c.218.283.418.597.597.932zm-.488 1.343a7.765 7.765 0 0 0-.395-.872C9.835 1.897 9.17 1.282 8.5 1.077V4.09c.81-.03 1.577-.13 2.282-.287z")
+                    }
+                }
             }
             ##
         }
@@ -114,15 +229,19 @@ program
 
     printUp::path
     {
-        
         path=replace(path,"\\","/")
         if not(contains(path,"/")) || path=="" || path=="/" { return }
         path=dir.name(path)
-
+        
         ##
         div(class="back")
         {
-            a(href="#<path.concat(path,@fileman_viewtrigger+'?view='+@view_style)>"){img(src="#<@fileman_basepath>/icons/up_icon.png" class="up")}
+            a(href="#<path.concat(path,@fileman_viewtrigger+'?view='+@view_style)>" class="up")
+            {
+                svg(xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16"){
+                    path("fill-rule"="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z")
+                }
+            }
         }
         ##
     }
@@ -141,17 +260,23 @@ program
 				a(href="#<path.concat(@@(folder,'fullpath'),@fileman_viewtrigger+'?view='+@view_style)>" class="file_container_box a_fileman")
 				{
 					img(class="icon folder-icon" src="#<@fileman_basepath>/icons/folder_icon.png")
-					p{$"#<@@(folder,'name')>"}
+					p(title="#<@@(folder,'name')>"){$"#<@@(folder,'name')>"}
 				}
 				div(class="controls")
 				{
-                    a(href='#<@@(folder,"fullpath")>#<@fileman_props_trigger>')
+                    a(href='#<@@(folder,"fullpath")>#<@fileman_props_trigger>' alt="Propiedades" title="Propiedades")
 					{
-						img(src="#<@fileman_basepath>/icons/settings_icon.png" alt="Propiedades" title="Propiedades")
+                        svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16"){
+                            path(d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z")
+                            path(d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z")
+                        }
 					}
-					a(href="#" onclick="fileman.do_delete('#<foldername>');")
+					a(href="#" onclick="fileman.do_delete('#<foldername>');" alt="Eliminar" title="Eliminar")
 					{
-						img(src="#<@fileman_basepath>/icons/trash_can_icon.png" alt="Eliminar" title="Eliminar")
+                        svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"){
+                            path(d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z")
+                            path("fill-rule"="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z")
+                        }
 					}
 				}
 			}
@@ -176,9 +301,11 @@ program
                     if iseditable(@@(file,"fullpath"))
                     {
                         ##
-                        a(href="#<@@(file,'fullpath')>#<@@(@fileman_editor_knowed_ext,file.extension(@@(file,'fullpath')))>" class="edit")
+                        a(href="#<@@(file,'fullpath')>#<@@(@fileman_editor_knowed_ext,file.extension(@@(file,'fullpath')))>" class="edit" alt="Editar" title="Editar")
                         {
-                            img(src="#<@fileman_basepath>/icons/pencil_icon.png" alt="Editar" title="Editar")
+                            svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16"){
+                                path(d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z")
+                            }
                         }
                         ##
                     }
@@ -201,21 +328,33 @@ program
 				}
 				div(class="controls")
 				{
-                    a(href='#<@@(file,"fullpath")>#<@fileman_props_trigger>')
+                    a(href='#<@@(file,"fullpath")>#<@fileman_props_trigger>' alt="Propiedades" title="Propiedades")
 					{
-						img(src="#<@fileman_basepath>/icons/settings_icon.png" alt="Propiedades" title="Propiedades")
+                        svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16"){
+                            path(d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z")
+                            path(d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z")
+                        }
 					}
-					a(href="#" onclick='fileman.do_rename("#<filename>");')
+					a(href="#" onclick='fileman.do_rename("#<filename>");' alt="Renombrar" title="Renombrar")
 					{
-						img(src="#<@fileman_basepath>/icons/rename_icon.png" alt="Renombrar" title="Renombrar")
+                        svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-input-cursor-text" viewBox="0 0 16 16"){
+                            path("fill-rule"="evenodd" d="M5 2a.5.5 0 0 1 .5-.5c.862 0 1.573.287 2.06.566.174.099.321.198.44.286.119-.088.266-.187.44-.286A4.165 4.165 0 0 1 10.5 1.5a.5.5 0 0 1 0 1c-.638 0-1.177.213-1.564.434a3.49 3.49 0 0 0-.436.294V7.5H9a.5.5 0 0 1 0 1h-.5v4.272c.1.08.248.187.436.294.387.221.926.434 1.564.434a.5.5 0 0 1 0 1 4.165 4.165 0 0 1-2.06-.566A4.561 4.561 0 0 1 8 13.65a4.561 4.561 0 0 1-.44.285 4.165 4.165 0 0 1-2.06.566.5.5 0 0 1 0-1c.638 0 1.177-.213 1.564-.434.188-.107.335-.214.436-.294V8.5H7a.5.5 0 0 1 0-1h.5V3.228a3.49 3.49 0 0 0-.436-.294A3.166 3.166 0 0 0 5.5 2.5.5.5 0 0 1 5 2z")
+                            path(d="M10 5h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4v1h4a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-4v1zM6 5V4H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v-1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h4z")
+                        }
 					}
-					a(href='#<@@(file,"fullpath")>#<@fileman_download_trigger>')
+					a(href='#<@@(file,"fullpath")>#<@fileman_download_trigger>' alt="Descargar" title="Descargar")
 					{
-						img(src="#<@fileman_basepath>/icons/download_icon.png" alt="Descargar" title="Descargar")
+                        svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16"){
+                            path(d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z")
+                            path(d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z")
+                        }
 					}
-					a(href="#" onclick='fileman.do_delete("#<filename>");')
+					a(href="#" onclick='fileman.do_delete("#<filename>");' alt="Eliminar" title="Eliminar")
 					{
-						img(src="#<@fileman_basepath>/icons/trash_can_icon.png" alt="Eliminar" title="Eliminar")
+                        svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"){
+                            path(d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z")
+                            path("fill-rule"="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z")
+                        }
 					}
 				}
 			}
@@ -234,22 +373,29 @@ program
 			
 			div(class="file_container_list")
 			{
+                div(style="width:1rem;"){$""}
 				a(href="#<path.concat(@@(folder,'fullpath'),@fileman_viewtrigger+'?view='+@view_style)>" class="file_container_box_list a_fileman")
 				{
 					img(class="icon_list folder-icon_list" src="#<@fileman_basepath>/icons/folder_icon.png")
-					p(class="filename"){$"#<@@(folder,'name')>"}
+					p(class="filename" title="#<@@(folder,'name')>"){$"#<@@(folder,'name')>"}
                     p(class="lastwrite"){$"#<@@(folder,'lastwrite')>"}
                     p(class="lastwrite"){$"tipo: #<@@(folder,'type')>"}
 				}
                 div(class="controls_list")
                 {
-                    a(href='#<@@(folder,"fullpath")>#<@fileman_props_trigger>')
+                    a(href='#<@@(folder,"fullpath")>#<@fileman_props_trigger>' alt="Propiedades" title="Propiedades")
 					{
-						img(src="#<@fileman_basepath>/icons/settings_icon.png" alt="Propiedades" title="Propiedades")
+                        svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16"){
+                            path(d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z")
+                            path(d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z")
+                        }
 					}
-                    a(href="#" onclick="fileman.do_delete('#<foldername>');")
+                    a(href="#" onclick="fileman.do_delete('#<foldername>');" alt="Eliminar" title="Eliminar")
                     {
-                        img(src="#<@fileman_basepath>/icons/trash_can_icon.png" alt="Eliminar" title="Eliminar")
+                        svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"){
+                            path(d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z")
+                            path("fill-rule"="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z")
+                        }
                     }
                 }
 			}
@@ -262,7 +408,6 @@ program
         for i=0;i<@count(files)
         {
             ref file=@item(files,i)
-            //path=@@(file,'path')
             filename=@@(file,'name')
             
             ##
@@ -281,7 +426,7 @@ program
                     }
                     ##
 					img(class="icon_list default-icon_list" src="#<icon>")
-					p(class="filename"){$"#<@@(file,'name')>"}
+					p(class="filename" title="#<@@(file,'name')>"){$"#<@@(file,'name')>"}
                     p(class="lastwrite"){$"#<@@(file,'lastwrite')>"}
                     p(class="lastwrite"){$"tipo: #<@@(file,'type')>"}
                     ##
@@ -308,22 +453,30 @@ program
 				}
                 div(class="controls_list")
                 {
-                    a(href='#<@@(file,"fullpath")>#<@fileman_props_trigger>')
+                    a(href='#<@@(file,"fullpath")>#<@fileman_props_trigger>' alt="Propiedades" title="Propiedades")
 					{
-						img(src="#<@fileman_basepath>/icons/settings_icon.png" alt="Propiedades" title="Propiedades")
+                        svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16"){
+                            path(d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z")
+                            path(d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z")
+                        }
 					}
-                    a(href="#" onclick='fileman.do_rename("#<filename>");')
+                    a(href="#" onclick='fileman.do_rename("#<filename>");' alt="Renombrar" title="Renombrar")
                     {
-                        img(src="#<@fileman_basepath>/icons/rename_icon.png" alt="Renombrar" title="Renombrar")
+                        svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-input-cursor-text" viewBox="0 0 16 16"){
+                            path("fill-rule"="evenodd" d="M5 2a.5.5 0 0 1 .5-.5c.862 0 1.573.287 2.06.566.174.099.321.198.44.286.119-.088.266-.187.44-.286A4.165 4.165 0 0 1 10.5 1.5a.5.5 0 0 1 0 1c-.638 0-1.177.213-1.564.434a3.49 3.49 0 0 0-.436.294V7.5H9a.5.5 0 0 1 0 1h-.5v4.272c.1.08.248.187.436.294.387.221.926.434 1.564.434a.5.5 0 0 1 0 1 4.165 4.165 0 0 1-2.06-.566A4.561 4.561 0 0 1 8 13.65a4.561 4.561 0 0 1-.44.285 4.165 4.165 0 0 1-2.06.566.5.5 0 0 1 0-1c.638 0 1.177-.213 1.564-.434.188-.107.335-.214.436-.294V8.5H7a.5.5 0 0 1 0-1h.5V3.228a3.49 3.49 0 0 0-.436-.294A3.166 3.166 0 0 0 5.5 2.5.5.5 0 0 1 5 2z")
+                            path(d="M10 5h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4v1h4a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-4v1zM6 5V4H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v-1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h4z")
+                        }
                     }
 
                     ##
                     if iseditable(@@(file,"fullpath"))
                     {
                         ##
-                        a(href='#<@@(file,"fullpath")>#<@@(@fileman_editor_knowed_ext,file.extension(@@(file,"fullpath")))>')
+                        a(href='#<@@(file,"fullpath")>#<@@(@fileman_editor_knowed_ext,file.extension(@@(file,"fullpath")))>' alt="Editar" title="Editar")
                         {
-                            img(src="#<@fileman_basepath>/icons/pencil_icon.png" alt="Editar" title="Editar")
+                            svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16"){
+                                path(d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z")
+                            }
                         }
                         ##
                     }
@@ -333,18 +486,209 @@ program
                     if not(isanyword(tolower(file.extension(@@(file,"fullpath"))),@fileman_nodownloadable))
                     {
                         ##
-                        a(href='#<@@(file,"fullpath")>#<@fileman_download_trigger>')
+                        a(href='#<@@(file,"fullpath")>#<@fileman_download_trigger>' alt="Descargar" title="Descargar")
                         {
-                            img(src="#<@fileman_basepath>/icons/download_icon.png" alt="Descargar" title="Descargar")
+                            svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16"){
+                                path(d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z")
+                                path(d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z")
+                            }
                         }
                         ##
                     }
                     ##
 
                     
-                    a(href="#" onclick='fileman.do_delete("#<filename>");')
+                    a(href="#" onclick='fileman.do_delete("#<filename>");' alt="Eliminar" title="Eliminar")
                     {
-                        img(src="#<@fileman_basepath>/icons/trash_can_icon.png" alt="Eliminar" title="Eliminar")
+                        svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"){
+                            path(d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z")
+                            path("fill-rule"="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z")
+                        }
+                    }
+                }
+			}
+            ##
+        }
+    }
+
+    // Pintar vista en tarjetas
+    printFoldersCard::&folders,base_path,uri
+    {
+        for i=0;i<@count(folders)
+        {
+            ref folder=@item(folders,i)
+            foldername = @@(folder,'name')
+
+            ref obj_info=dklfso.createObjectInfo(base_path,path.concat(uri,foldername))
+
+            ##
+			div(class="file_container_card")
+			{
+                script{$"console.log('#<uri>')"}
+				a(href="#<path.concat(@@(folder,'fullpath'),@fileman_viewtrigger+'?view='+@view_style)>" class="file_container_box_card a_fileman")
+				{
+                    div(class="section_card name_card")
+                    {
+                        img(class="icon_card folder_icon_card" src="#<@fileman_basepath>/icons/folder_icon.png")
+					    span(title="#<@@(folder,'name')>"){$"#<@@(folder,'name')>"}
+                    }
+                    div(class="section_card title_card")
+                    {
+                        #! title = @@(obj_info,"properties/web_meta_tags/title")
+                        #$ span(title="#<title>"){strong{$"#<title>"}}
+                    }
+                    div(class="section_card description_card")
+                    {
+                        #! description = @@(obj_info,"properties/web_meta_tags/description")
+                        #$ span(title="#<description>"){$"#<description>"}
+                    }
+				}
+				div(class="controls_card")
+				{
+                    a(href='#<@@(folder,"fullpath")>#<@fileman_props_trigger>' alt="Propiedades" title="Propiedades")
+					{
+                        svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16"){
+                            path(d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z")
+                            path(d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z")
+                        }
+					}
+					a(href="#" onclick="fileman.do_delete('#<foldername>');" alt="Eliminar" title="Eliminar")
+					{
+                        svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"){
+                            path(d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z")
+                            path("fill-rule"="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z")
+                        }
+                        
+					}
+				}
+			}
+            ##
+        }
+    }
+    printFilesCard::&files,base_path,uri
+    {
+        for i=0;i<@count(files)
+        {
+            ref file=@item(files,i)
+            filename=@@(file,'name')
+
+            ref obj_info=dklfso.createObjectInfo(base_path,path.concat(uri,filename))
+            
+            ##
+			div(class="file_container_card")
+			{
+                div(class="controls_above")
+                {
+                    input(type="checkbox" onclick="fileman.checkboxFile(this,'#<filename>');")
+                }
+                
+				a(href="#<@@(file,'fullpath')>" class="file_container_box_card a_fileman")
+				{
+                    ##
+                    ext = file.extension(@@(file,'name'))
+                    icon = @fileman_basepath+"/icons/.defualt.icon.png"
+                    extIcon =path.concat(path.concat(dir.name(@@(@http_context,'request/headers/path_translated')),"icons"),ext+".icon.png")
+                    
+                    if file.exists(extIcon){ icon = path.concat(path.concat(@fileman_basepath,"icons"),ext+".icon.png")}
+
+                    ##
+                    div(class="section_card name_card")
+                    {
+                        img(class="icon_card default_icon_card" src="#<icon>")
+					    span(class="filename" title="#<@@(file,'name')>"){$"#<@@(file,'name')>"}
+                    }
+                    div(class="section_card title_card")
+                    {
+                        #! title = @@(obj_info,"properties/web_meta_tags/title")
+                        #$ span(title="#<title>"){strong{$"#<title>"}}
+                    }
+                    div(class="section_card description_card")
+                    {
+                        #! description = @@(obj_info,"properties/web_meta_tags/description")
+                        #$ span(title="#<description>"){$"#<description>"}
+                    }
+                    ##
+
+                    size='bytes'
+                    length = field.num(file,'length')
+                    integer = 1
+
+                    if length>=1073741824 {
+                        size='GB'
+                        integer=1073741824
+                    } 
+                    else if length>=1048576 {
+                        size='MB' 
+                        integer=1048576
+                    } 
+                    else if length>=1024 {
+                        size='KB' 
+                        integer=1024
+                    }
+
+                    length = div(length,integer)
+                    ##
+                    div(class="section_card filedata_card")
+                    {
+                        small(class="lastwrite"){$"#<@@(file,'lastwrite')>"}
+                        small{$" | "}
+                        small(class="length"){$"tamaño: #<format(round(length,3),'#,#.0')+' '+size>"}
+                    }
+                    
+				}
+                div(class="controls_card")
+                {
+                    a(href='#<@@(file,"fullpath")>#<@fileman_props_trigger>' alt="Propiedades" title="Propiedades")
+					{
+                        svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16"){
+                            path(d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z")
+                            path(d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z")
+                        }
+					}
+                    a(href="#" onclick='fileman.do_rename("#<filename>");' alt="Renombrar" title="Renombrar")
+                    {
+                        svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-input-cursor-text" viewBox="0 0 16 16"){
+                            path("fill-rule"="evenodd" d="M5 2a.5.5 0 0 1 .5-.5c.862 0 1.573.287 2.06.566.174.099.321.198.44.286.119-.088.266-.187.44-.286A4.165 4.165 0 0 1 10.5 1.5a.5.5 0 0 1 0 1c-.638 0-1.177.213-1.564.434a3.49 3.49 0 0 0-.436.294V7.5H9a.5.5 0 0 1 0 1h-.5v4.272c.1.08.248.187.436.294.387.221.926.434 1.564.434a.5.5 0 0 1 0 1 4.165 4.165 0 0 1-2.06-.566A4.561 4.561 0 0 1 8 13.65a4.561 4.561 0 0 1-.44.285 4.165 4.165 0 0 1-2.06.566.5.5 0 0 1 0-1c.638 0 1.177-.213 1.564-.434.188-.107.335-.214.436-.294V8.5H7a.5.5 0 0 1 0-1h.5V3.228a3.49 3.49 0 0 0-.436-.294A3.166 3.166 0 0 0 5.5 2.5.5.5 0 0 1 5 2z")
+                            path(d="M10 5h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4v1h4a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-4v1zM6 5V4H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v-1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h4z")
+                        }
+                    }
+
+                    ##
+                    if iseditable(@@(file,"fullpath"))
+                    {
+                        ##
+                        a(href='#<@@(file,"fullpath")>#<@@(@fileman_editor_knowed_ext,file.extension(@@(file,"fullpath")))>' alt="Editar" title="Editar")
+                        {
+                            svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16"){
+                                path(d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z")
+                            }
+                        }
+                        ##
+                    }
+                    ##
+                    
+                    ##
+                    if not(isanyword(tolower(file.extension(@@(file,"fullpath"))),@fileman_nodownloadable))
+                    {
+                        ##
+                        a(href='#<@@(file,"fullpath")>#<@fileman_download_trigger>' alt="Descargar" title="Descargar")
+                        {
+                            svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16"){
+                                path(d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z")
+                                path(d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z")
+                            }
+                        }
+                        ##
+                    }
+                    ##
+
+                    
+                    a(href="#" onclick='fileman.do_delete("#<filename>");' alt="Eliminar" title="Eliminar")
+                    {
+                        svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"){
+                            path(d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z")
+                            path("fill-rule"="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z")
+                        }
                     }
                 }
 			}
@@ -356,18 +700,18 @@ program
     {
         return field.exist(@fileman_editor_knowed_ext, tolower( file.extension(f)))
     }
-    
+
     //Recuperar manifiesto de privilegios del recurso solicitado
 	base_path=field.dstr(@http_context,"request/headers/document_root","")
 	uri=dir.name(list.str(split(field.dstr(@http_context,"request/headers/request_uri","/"),"?"),0))
-    
+
     if field.exist(@http_context,"request/get/base_path") && @dklfso_multisites { base_path=@@(@http_context,"request/get/base_path") }
     if field.exist(@http_context,"request/get/uri") { uri=@@(@http_context,"request/get/uri") }
-    
+
     if field.exist(@http_context,"request/get/host") && @dklfso_multisites { base_path= path.concat(@dklfso_websites_path,@@(@http_context,"request/get/host")) }
-    
+
 	ref res_info=dklfso.createObjectInfo(base_path,uri)
-    
+
     if isnull(res_info){ do rise_error(0,"Recurso no encontrado " + base_path+" "+uri)}
     if @@(res_info,"type")!="folder" { do rise_error(0,"No es un directorio")}
 
@@ -381,7 +725,7 @@ program
         @"deep"     : field.dnum(@http_context,"request/get/deep",0)
         @"mode"     : field.dnum(@http_context,"request/get/mode",0) // 0-directorios y archivos, 1-solo directorios, 2-solo archivos, 3-solo resultados de búsqueda de archivos
     }
-    
+
     
 
     new res { @"success": @true }
@@ -389,7 +733,7 @@ program
     ref folders=@null
     ref files=@null
 
-    @view_style=field.dstr(@http_context,"request/get/view","icons")
+    @view_style=field.dstr(@http_context,"request/get/view",@fileman_default_view)
     
     if @@(p,"mode")==3 { ref files=@@(p,"&found") }
     else 
@@ -404,18 +748,21 @@ program
         $'
         <link href="#<@fileman_basepath>/css/fileman.css" rel="stylesheet">
         <script type="text/javascript" src="#<@fileman_basepath>/js/fileman.js"></script>
+        <script type="text/javascript" src="#<@fileman_basepath>/js/handlefiles.js"></script>
         <script>
             fileman.folderPath="#<ifstr(@@(res_info,"$fullpath")=="","/",@@(res_info,"$fullpath")+ifstr(length(trim(@@(res_info,"$fullpath")))==1,"","/"))>";
             fileman.currentURL="#<path.concat(@@(res_info,"$fullpath"),@fileman_viewtrigger)>";
             fileman.cookieData=#<getCookie()>;
             fileman.codeExts=#<to.json(@fileman_editor_knowed_ext)>;
             fileman.files=#<to.json(files)>
+            fileman.renderWebsencia=#<@fileman_websencia_render>;
         </script>
 		'
-        form(enctype="multipart/form-data" method="POST" id="formData")
-        {
-            input(type="file" id="input_file" name="fileuploader" style="display:none" multiple=""){}
-        }
+        div(id="processing"){div(id="processing_loader"){$""}p{$"Procesando"}}
+        form(enctype="multipart/form-data" method="POST" id="formData"){ input(type="file" id="input_file" name="fileuploader" style="display:none" multiple="")}
+        form(enctype="multipart/form-data" method="POST" id="formData2"){input(type="file" id="input_folder" name="fileuploader2" style="display:none" webkitdirectory="" directory="" multiple="")}
+        form(enctype="multipart/form-data" method="POST" id="formDataZip"){input(type="file" id="input_file_zip" name="fileuploaderzip" style="display:none" accept=".zip,.rar")}
+        form(enctype="multipart/form-data" method="POST" id="formDataWebsencia"){input(type="file" id="input_file_websencia" name="fileuploaderwebsencia" style="display:none" accept=".jsnwm")}
         
 		div(class="route_navigation"){
         ##
@@ -447,6 +794,17 @@ program
                 ##
                 do printFoldersList(folders)
                 do printFilesList(files)
+                ##
+                }
+                ##
+            }
+            case "cards"
+            {
+                ##
+                div(class="main_body_card" id="mainBody"){
+                ##
+                do printFoldersCard(folders,base_path,uri)
+                do printFilesCard(files,base_path,uri)
                 ##
                 }
                 ##
